@@ -614,7 +614,7 @@
         "deprecated": false
       }
     },
-    "/api/v1/spot/history": {
+    "/api/v1/spot/order/history": {
       "get": {
         "summary": "Spot order history",
         "description": "Returns the history of orders that have already been done",

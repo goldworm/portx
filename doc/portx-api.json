@@ -1,0 +1,964 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "portx",
+    "version": "1"
+  },
+  "servers": [
+    {
+      "url": "https://api.portx.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "sec0": {
+        "type": "oauth2",
+        "flows": {}
+      }
+    }
+  },
+  "security": [
+    {
+      "sec0": []
+    }
+  ],
+  "paths": {
+    "/api/v1/asset": {
+      "get": {
+        "summary": "Asset",
+        "description": "Returns all assets owned by a specific account",
+        "operationId": "asset",
+        "parameters": [
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "Symbol representing crypto or fiat currency (BTC, ETH, ICX, ...)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CEX-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"result\": [\n    {\n      \"currency\": \"BTC\",\n      \"balance\": \"1.2\",\n      \"available\": \"1.2\",\n      \"locked\": \"0.0\",\n    },\n    {\n      \"currency\": \"ETH\",\n      \"balance\": \"100.1\",\n      \"available\": \"50.1\",\n      \"locked\": \"50.0\",\n    }\n  ]\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"error\" {\n    \"code\": 20000,\n    \"message\": \"internal error\"\n  }\n}"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/deposit/addresses": {
+      "get": {
+        "summary": "Deposit addresses",
+        "description": "Returns deposit addresses with network",
+        "operationId": "deposit",
+        "parameters": [
+          {
+            "name": "currency",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CEX-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"result\": [\n    {\n      \"currency\": \"BTC\",\n      \"chain\": \"BTC-Bitcoin\",\n      \"target\": \"trade\",\n      \"tag\": \"Spot trading\"\n    },    \n    {\n      \"currency\": \"BTC\",\n      \"chain\": \"BTC-Ethereum\",\n      \"target\": \"fund\",\n      \"tag\": \"Staking\"\n    }\n  ]\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "currency": {
+                            "type": "string",
+                            "example": "BTC"
+                          },
+                          "chain": {
+                            "type": "string",
+                            "example": "BTC-Bitcoin"
+                          },
+                          "target": {
+                            "type": "string",
+                            "example": "trade"
+                          },
+                          "tag": {
+                            "type": "string",
+                            "example": "Spot trading"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/deposit/history": {
+      "get": {
+        "summary": "Deposit history",
+        "description": "Returns deposit history for a specific account",
+        "operationId": "historydeposit",
+        "parameters": [
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "Symbol representing crypto or fiat currency (BTC, ETH, ICX, ...)",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "Cursor for pagination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of items which can be included in a response",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-CEX-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"nextCursor\": \"1\",\n  \"items\": [\n    \"depositId\": \"94332e99-3a87-4a35-ad98-28b0c969f830\",\n    \"txId\": \"ESBFVQUTPIWQNJSPXFNHNYHSQNTGKRVKPRABQWTAXCDWOAKDKYWPTVG9BGXNVNKTLEJGESAVXIKIZ9999\",\n    \"currency\": \"BTC\",\n    \"amount\": \"1.0\",\n    \"state\": \"ACCEPTED\",\n    \"createdAt\": 1713152073000,\n  ]\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/spot/order/status": {
+      "get": {
+        "summary": "Spot order status",
+        "description": "Returns the list of pending orders",
+        "operationId": "order-status",
+        "parameters": [
+          {
+            "name": "market",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-CEX-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"orders\": [\n    {\n      \"orderId\": \"cdd92199-2897-4e14-9448-f923320408ad\",\n      \"market\": \"BTC-USDT\",\n      \"side\": \"buy\",\n      \"orderType\": \"limit\",\n      \"timeInForce\": \"gtc\",\n      \"createdAt\": 1713165464000,\n      \"price\": \"500.0\",\n      \"quantity\": \"100.0\",\n      \"executedQuantity\": \"89.9\"\n  ]\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/spot/cancel": {
+      "post": {
+        "summary": "Cancel spot order",
+        "description": "",
+        "operationId": "cancel-order",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "market",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "side",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CEX-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"orderId\": \"cdd92199-2897-4e14-9448-f923320408ad\"\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "orderId": {
+                      "type": "string",
+                      "example": "cdd92199-2897-4e14-9448-f923320408ad"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/withdraw/history": {
+      "get": {
+        "summary": "Withdraw history",
+        "description": "Returns withdrawal history for a specific account",
+        "operationId": "historywithdraw",
+        "parameters": [
+          {
+            "name": "currency",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-CEX-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"nextPageCursor\": \"2\",\n  \"result\": [\n    {\n      \"currency\": \"BTC\",\n      \"txId\": \"\",\n      \"fee\": \"0.01\",\n      \"amount\": \"0.2\",\n      \"createdAt\": 1713158052000,\n      \"doneAt\": 1713158072000,\n    },\n    {\n      \"currency\": \"KRW\",\n      \"txId\": \"\",\n      \"fee\": \"1000\",\n      \"amount\": \"1000000\",\n      \"createdAt\": 1713065661000,\n      \"doneAt\": 1713065661000\n  ]\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/spot/order": {
+      "post": {
+        "summary": "Place buy/sell spot order",
+        "description": "Place buy/sell spot order to the order book",
+        "operationId": "order",
+        "parameters": [
+          {
+            "name": "X-CEX-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "side",
+                  "orderType",
+                  "market",
+                  "price",
+                  "quantity"
+                ],
+                "properties": {
+                  "side": {
+                    "type": "string",
+                    "description": "\"buy\" or \"sell\""
+                  },
+                  "orderType": {
+                    "type": "string",
+                    "description": "limit, market, stop_loss, stop_loss_limit, take_profit, take_profit_limit, limit_maker"
+                  },
+                  "market": {
+                    "type": "string",
+                    "description": "BTC-KRW, ETH-USDT, ICX-USDT"
+                  },
+                  "price": {
+                    "type": "string",
+                    "description": "\"66034.19\", \"market\""
+                  },
+                  "quantity": {
+                    "type": "string"
+                  },
+                  "timeInForce": {
+                    "type": "string",
+                    "description": "\"gtc\", \"ioc\", \"fok\", \"post_only\""
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"orderId\": \"cdd92199-2897-4e14-9448-f923320408ad\"\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "orderId": {
+                      "type": "string",
+                      "example": "cdd92199-2897-4e14-9448-f923320408ad"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/spot/markets": {
+      "get": {
+        "summary": "Market list",
+        "description": "Returns spot market list",
+        "operationId": "marketlist",
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"result\": [\n    {\n      \"market\": \"BTC-USDT\",\n      \"baseCurrency\": \"BTC\",\n      \"quoteCurrency\": \"USDT\"\n    },\n    {\n      \"market\": \"ETH-USDT\",\n      \"baseCurrency\": \"ETH\",\n      \"quoteCurrency\": \"USDT\"\n    },\n    {\n      \"market\": \"ETH-BTC\",\n      \"baseCurrency\": \"ETH\",\n      \"quoteCurrency\": \"BTC\"\n    }\n  ]\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "market": {
+                            "type": "string",
+                            "example": "BTC-USDT"
+                          },
+                          "baseCurrency": {
+                            "type": "string",
+                            "example": "BTC"
+                          },
+                          "quoteCurrency": {
+                            "type": "string",
+                            "example": "USDT"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/spot/history": {
+      "get": {
+        "summary": "Spot order history",
+        "description": "Returns the history of orders that have already been done",
+        "operationId": "orderhistory",
+        "parameters": [
+          {
+            "name": "market",
+            "in": "query",
+            "description": "Symbol representing market (BTC-USDT, ETH-KRW)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "For pagination",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of items which can be included in a response",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "X-CEX-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"nextCursor\": \"1\",\n  \"result\": [\n    {\n    \t\"orderId\": \"680800019749904384\",\n      \"side\": \"sell\",\n      \"orderType\": \"limit\",\n      \"timeInForce\": \"gtc\",\n      \"price\": \"1000.5\",\n      \"quantity\":\n      \"createdAt\": 1713166257000\n    }\n  ]\n}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/spot/order/detail": {
+      "get": {
+        "summary": "Spot order details",
+        "description": "Returns details of a specific order",
+        "operationId": "orderdetails",
+        "parameters": [
+          {
+            "name": "market",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "includes",
+            "in": "query",
+            "description": "\"trades,fee\"",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CEX-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\n  \"orderId\": \"680800019749904384\",\n  \"market\": \"ICX-USDT\",\n  \"side\": \"buy\",\n  \"orderType\": \"limit\",\n  \"timeInForce\": \"gtc\",\n  \"price\": \"1.0\",\n  \"quantity\": \"2500.0\",\n  \"executed\": \"2500.0\",\n  \"averagePrice\": \"0.98\",\n  \"createdAt\": 1713169464000,\n  \"state\": \"filled\",\n  \"fee\": \"6.0\",\n  \"trades\": [\n    {\n    \t\"price\": \"1.0\",\n    \t\"quantity\": \"2000.0\",\n      \"executedAt\": 1713169464000\n    },\n    {\n      \"price\": \"0.9\",\n      \"quantity\": \"500.0\",\n      \"executedAt\": 1713169836000\n    }\n  ]\n}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "orderId": {
+                      "type": "string",
+                      "example": "680800019749904384"
+                    },
+                    "market": {
+                      "type": "string",
+                      "example": "ICX-USDT"
+                    },
+                    "side": {
+                      "type": "string",
+                      "example": "buy"
+                    },
+                    "orderType": {
+                      "type": "string",
+                      "example": "limit"
+                    },
+                    "timeInForce": {
+                      "type": "string",
+                      "example": "gtc"
+                    },
+                    "price": {
+                      "type": "string",
+                      "example": "1.0"
+                    },
+                    "quantity": {
+                      "type": "string",
+                      "example": "2500.0"
+                    },
+                    "executed": {
+                      "type": "string",
+                      "example": "2500.0"
+                    },
+                    "averagePrice": {
+                      "type": "string",
+                      "example": "0.98"
+                    },
+                    "createdAt": {
+                      "type": "integer",
+                      "example": 1713169464000,
+                      "default": 0
+                    },
+                    "state": {
+                      "type": "string",
+                      "example": "filled"
+                    },
+                    "fee": {
+                      "type": "string",
+                      "example": "6.0"
+                    },
+                    "trades": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "price": {
+                            "type": "string",
+                            "example": "1.0"
+                          },
+                          "quantity": {
+                            "type": "string",
+                            "example": "2000.0"
+                          },
+                          "executedAt": {
+                            "type": "integer",
+                            "example": 1713169464000,
+                            "default": 0
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/scrap/session": {
+      "post": {
+        "summary": "Reserve session for scraping",
+        "description": "",
+        "operationId": "reserve-session-for-scraping",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "site",
+                  "userId",
+                  "features"
+                ],
+                "properties": {
+                  "site": {
+                    "type": "string"
+                  },
+                  "userId": {
+                    "type": "string"
+                  },
+                  "features": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\"sessionId:\"12345678-1234-1234-1234-123456789\"}"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/v1/scrap/session/{uid}": {
+      "post": {
+        "summary": "Scrap Result",
+        "description": "",
+        "operationId": "scrap-result",
+        "parameters": [
+          {
+            "name": "uid",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{\"cexToken\":\"XXX.XXX.XXX\"}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "cexToken": {
+                      "type": "string",
+                      "example": "XXX.XXX.XXX"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "400",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Result": {
+                    "value": "{}"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "x-readme": {
+    "headers": [],
+    "explorer-enabled": true,
+    "proxy-enabled": true
+  },
+  "x-readme-fauxas": true
+}
